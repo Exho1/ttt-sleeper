@@ -7,24 +7,24 @@ hook.Add("TTTBeginRound", "ResetSleeper", ResetSleeper)
 
 function sleeper()
     local alive_t = {}
-	for _, v in pairs(player.GetAll()) do
-	    if v:Alive() and v:IsTraitor() then table.insert(alive_t, v) end
-	end
-	if #alive_t == 0 and !sleeper_active then
-		local target_pool = {}
-	    for _, ply in pairs(player.GetAll()) do
-	    	if not ply:IsTraitor() and ply:Alive() and not ply:IsSpec() then table.insert(target_pool, ply)	end
-	    end
-		if #target_pool > 1 then 
-		    local pick = table.Random(target_pool)
-	        pick:SetRole(ROLE_TRAITOR)
-			net.Start("TTT_Role")
-			net.WriteUInt(pick:GetRole(), 2)
-			net.Send(pick)
-	        hook.Call("SleeperHitman", GAMEMODE, pick)
-		end
-		sleeper_active = true
-	end
+    for _, v in pairs(player.GetAll()) do
+        if v:Alive() and v:IsTraitor() then table.insert(alive_t, v) end
+    end
+    if #alive_t == 0 and !sleeper_active then
+        local target_pool = {}
+        for _, ply in pairs(player.GetAll()) do
+            if not ply:IsTraitor() and ply:Alive() and not ply:IsSpec() then table.insert(target_pool, ply)    end
+        end
+        if #target_pool > 1 then 
+            local pick = table.Random(target_pool)
+            pick:SetRole(ROLE_TRAITOR)
+            net.Start("TTT_Role")
+            net.WriteUInt(pick:GetRole(), 2)
+            net.Send(pick)
+            hook.Call("SleeperHitman", GAMEMODE, pick)
+        end
+        sleeper_active = true
+    end
 end
 
 function WinHook()
@@ -67,11 +67,11 @@ end
 hook.Add("TTTCheckForWin", "WinHook", WinHook)
 
 function onPlayerDeath(vic, inf, att)
-	sleeper()
+    sleeper()
 end
 hook.Add("PostPlayerDeath", "onPlayerDeath", onPlayerDeath)
 
 function onPlayerDisconnect(ply)
-	sleeper()
+    sleeper()
 end
 hook.Add("PlayerDisconnected", "onPlayerDisconnect", onPlayerDisconnect)
