@@ -13,7 +13,7 @@ local function sleeper()
     if #alive_t == 0 and !sleeper_active then
         local target_pool = {}
         for _, ply in pairs(player.GetAll()) do
-            if not ply:IsTraitor() and ply:Alive() and not ply:IsSpec() then table.insert(target_pool, ply)    end
+            if not ply:IsTraitor() and not ply:IsDetective() and ply:Alive() and not ply:IsSpec() then table.insert(target_pool, ply)    end
         end
         if #target_pool > 1 then 
             local pick = table.Random(target_pool)
