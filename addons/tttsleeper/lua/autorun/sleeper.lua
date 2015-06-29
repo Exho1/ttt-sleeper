@@ -1,11 +1,11 @@
 local sleeper_active = false
 
-function ResetSleeper()
+local function ResetSleeper()
     sleeper_active = false
 end
 hook.Add("TTTBeginRound", "ResetSleeper", ResetSleeper)
 
-function sleeper()
+local function sleeper()
     local alive_t = {}
     for _, v in pairs(player.GetAll()) do
         if v:Alive() and v:IsTraitor() then table.insert(alive_t, v) end
@@ -27,7 +27,7 @@ function sleeper()
     end
 end
 
-function WinHook()
+local function WinHook()
    --if ttt_dbgwin:GetBool() then return WIN_NONE end
    -- The Preventwin cvar wont work for now, will try n find a way to fix asap
 
@@ -66,12 +66,12 @@ function WinHook()
 end
 hook.Add("TTTCheckForWin", "WinHook", WinHook)
 
-function onPlayerDeath(vic, inf, att)
+local function onPlayerDeath(vic, inf, att)
     sleeper()
 end
 hook.Add("PostPlayerDeath", "onPlayerDeath", onPlayerDeath)
 
-function onPlayerDisconnect(ply)
+local function onPlayerDisconnect(ply)
     sleeper()
 end
 hook.Add("PlayerDisconnected", "onPlayerDisconnect", onPlayerDisconnect)
