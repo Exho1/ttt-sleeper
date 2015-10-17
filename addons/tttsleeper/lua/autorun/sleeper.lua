@@ -6,22 +6,40 @@ end
 hook.Add("TTTBeginRound", "ResetSleeper", ResetSleeper)
 
 local function sleeper()
+    -- Should have at least 2 Traitors before sleepers become a thing
+    if #player.GetAll() < 8 then return end
+    
+    -- 33.3% chance of sleeper traitors, it shouldn't happen every round or it would get old fast
+    if math.random(3) != 3 then return end
+
     local alive_t = {}
     for _, v in pairs(player.GetAll()) do
         if v:Alive() and v:IsTraitor() then table.insert(alive_t, v) end
     end
+    
     if #alive_t == 0 and !sleeper_active then
         local target_pool = {}
         for _, ply in pairs(player.GetAll()) do
             if not ply:IsTraitor() and not ply:IsDetective() and ply:Alive() and not ply:IsSpec() then table.insert(target_pool, ply)    end
         end
         if #target_pool > 1 then 
-            local pick = table.Random(target_pool)
-            pick:SetRole(ROLE_TRAITOR)
+            local ply = table.Random(target_pool)
+            ply:SetRole(ROLE_TRAITOR)
+            
+            ply:ChatPrint("You're the Sleeper Traitor! Go finish the job!")
+            
+            for _, v in pairs( player.GetAll() ) do
+                if v != ply then
+                    v:ChatPrint("The Sleeper Traitor has awoken!")
+                end
+            end
+            
             net.Start("TTT_Role")
-            net.WriteUInt(pick:GetRole(), 2)
-            net.Send(pick)
-            hook.Call("SleeperHitman", GAMEMODE, pick)
+            net.WriteUInt(ply:GetRole(), 2)
+            net.Send(ply)
+            
+            -- Hitman support or something
+            hook.Call("SleeperHitman", GAMEMODE, ply)
         end
         sleeper_active = true
     end
